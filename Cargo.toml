@@ -1,0 +1,10 @@
+[package]
+name = "sms-2dm"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[lints]
+rust.elided_lifetimes_in_paths = "warn"
+clippy.enum_glob_use = "warn"
