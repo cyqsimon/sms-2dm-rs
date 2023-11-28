@@ -189,6 +189,16 @@ mod test {
     use super::*;
 
     #[test]
+    fn multi_line_nodestring_parse() -> anyhow::Result<()> {
+        let input = fs::read_to_string("test-res/multi-line-nodestring.2dm")?;
+        let mesh = <Mesh2D>::from_str(&input)?;
+
+        assert_eq!(mesh.nodestring.len(), 1);
+
+        Ok(())
+    }
+
+    #[test]
     fn sample_file_2_parse() -> anyhow::Result<()> {
         let input = fs::read_to_string("test-res/sample-2.2dm")?;
         let mesh = <Mesh2D>::from_str(&input)?;
