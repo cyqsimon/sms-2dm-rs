@@ -11,3 +11,6 @@ thiserror = "1.0.50"
 [lints]
 rust.elided_lifetimes_in_paths = "warn"
 clippy.enum_glob_use = "warn"
+
+[dev-dependencies]
+anyhow = "1.0.75"

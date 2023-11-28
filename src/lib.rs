@@ -181,3 +181,29 @@ where
         Ok(Self(count))
     }
 }
+
+#[cfg(test)]
+mod test {
+    use std::fs;
+
+    use super::*;
+
+    #[test]
+    fn sample_file_2_parse() -> anyhow::Result<()> {
+        let input = fs::read_to_string("test-res/sample-2.2dm")?;
+        let mesh = <Mesh2D>::from_str(&input)?;
+
+        assert!(mesh.material_count_per_element.is_none());
+        assert_eq!(mesh.nodes.len(), 6);
+        assert_eq!(mesh.e2ls.len(), 0);
+        assert_eq!(mesh.e3ls.len(), 0);
+        assert_eq!(mesh.e3ts.len(), 3);
+        assert_eq!(mesh.e6ts.len(), 0);
+        assert_eq!(mesh.e4qs.len(), 3);
+        assert_eq!(mesh.e8qs.len(), 0);
+        assert_eq!(mesh.e9qs.len(), 0);
+        assert_eq!(mesh.nodestring.len(), 4);
+
+        Ok(())
+    }
+}

@@ -1,0 +1,227 @@
+MESH2D
+E3T      1      4      1      3      2
+E3T      2      2      5      6      2
+E4Q      3      7      8      5      2      2
+.
+.
+.
+E4Q   1543    205   1226   1225   1221      2
+E4Q   1544    191   1222   1226    189      1
+E3T   1545    205    189   1226      2
+ND      1 -7.62907961e+001 4.00243909e+001 8.41808447e+001
+ND      2 -7.62907174e+001 4.00219296e+001 8.36614138e+001
+ND      3 -7.62907700e+001 4.00238340e+001 7.32122342e+001
+.
+.
+.
+ND   1222 -7.62811008e+001 4.00272795e+001 7.28898113e+001
+ND   1225 -7.62814608e+001 4.00273631e+001 7.29479847e+001
+ND   1226 -7.62812859e+001 4.00271526e+001 7.41231480e+001
+NS       1      3     10     15      6     -2
+NS     126    127    128    129    173   -194
+NS    1006    988    987    989    968    948    931    930    929    906
+NS    -904
+NS     720    701    699    686    680    664    649    648    647    640
+NS    -621
+BEGPARAMDEF
+GM  "Gen2DM"
+SI  0
+DY  1
+TU  "minutes"
+TD  20  1000
+KEY  "sms-gen2dm"
+PG  "Hydrodynamic" 1
+PD  "Time interval" 1 20 0 2147483647
+PD  "Velocity max (ft/sec)" 2 75 0 100
+PD  "H min" 2 0.25 0 1.79769e+308
+PD  "A min" 2 1 1e-015 1.79769e+308
+PD  "Check for dry elements" 0 1
+PD  "Element style" 3 "quadratic"
+PD  "Critical scour velocity" 4 "2.0 ft/sec"
+PO  "0.8 ft/sec" "2.0 ft/sec" "2.6 ft/sec"
+PG  "Sediment transport" 0
+PD  "Time interval" 1 10 0 2147483647
+PD  "Source X postion" 2 0 -1.79769e+308 1.79769e+308
+PD  "Source Y position" 2 0 -1.79769e+308 1.79769e+308
+PD  "Source elevation" 2 0 -1.79769e+308 1.79769e+308
+PD  "Parcel mass (slug)" 2 0.5 0.0001 1.79769e+308
+PD  "Particle mass (slug)" 2 0.003 0.0001 1.79769e+308
+PD  "Particle size (in)" 2 0.05 0 1.79769e+308
+PD  "Deviation" 2 0 -1.79769e+308 1.79769e+308
+PD  "Average density (slug/ft^3)" 2 3 1.5 6
+NUME  3
+BCPGC  1
+BEDISP  0 2 0 0 0 1 1 1 255 128 255 1
+BEFONT  0 1
+BD  0 "Water sink/source" 2 3 "Flow rate (cfs)" "Water temperature (F)" "Flow rate(cfs)" 1 "(none)"
+BV  "Flow rate (cfs)" 0 -1.79769e+308 1.79769e+308
+BV  "Water temperature (F)" 65 32.5 100
+BV  "Flow rate(cfs)" 0 0 1.79769e+308
+BCDISP  0 2 10 1 0 255 255 1
+BD  0 "Ceiling (pressure flow)" 1 1 "Ceiling (ft above sea level)" 0 "(none)"
+BV  "Ceiling (ft above sea level)" 0 -1.79769e+308 1.79769e+308
+BCDISP  0 1 3 1 128 128 255 1
+BD  0 "Water surface observation gauge" 3 0 1 "(none)"
+BCDISP  0 3 3 1 255 128 128 1
+BEDISP  1 0 0 255 1 1 1 0 255 128 0 1
+BEFONT  1 1
+BD  1 "Water surface" 1 3 "Elevation" "Essential/Natural factor" "Vary along nodestring factor" 0 "(none)"
+BV  "Elevation" 0 -1.79769e+308 1.79769e+308
+BV  "Essential/Natural factor" 0 0 1
+BV  "Vary along nodestring factor" 1 0 10
+BCDISP  1 1 5 0 255 0 0 1
+BD  1 "Flow" 2 1 "Flow rate (cfs)" 0 "(none)"
+BV  "Flow rate (cfs)" 0 0 1.79769e+308
+BCDISP  1 2 5 0 128 255 0 1
+BD  1 "Supercritical" 3 0 0 "(none)"
+BCDISP  1 3 1 0 0 0 0 1
+BD  1 "1D weir segment" 4 4 "Discharge coefficient" "Weir width (ft)" "Crest level (m above sea level)" "Equation (0 = water level / 1 = energy head)" 1 "(none)"
+BV  "Discharge coefficient" 1 0 1.79769e+308
+BV  "Weir width (ft)" 1 0 1.79769e+308
+BV  "Crest level (m above sea level)" 0 -1.79769e+308 1.79769e+308
+BV  "Equation (0 = water level / 1 = energy head)" 0 0 1
+BCDISP  1 4 1 0 0 0 0 0
+BD  1 "Sediment trap" 5 0 1 "Sediment transport"
+BCDISP  1 5 1 0 0 0 0 1
+BEDISP  2 2 0 0 0 1 1 0 0 0 0 1
+BEFONT  2 1
+BD  2 "2D weir" 1 3 "Discharge coefficient" "Crest level (ft above sea level)" "Equation (0 = water level / 1 = energy head)" 1 "(none)"
+BV  "Discharge coefficient" 1 0 1.79769e+308
+BV  "Crest level (ft above sea level)" 0 -1.79769e+308 1.79769e+308
+BV  "Equation (0 = water level / 1 = energy head)" 0 0 1
+BCDISP  2 1 1 0 0 0 0 1
+MD  2 "Manning" "Kinematic eddy viscosity"
+MV  "Manning" 0.035 0.01 0.18
+MV  "Kinematic eddy viscosity" 0 -1.79769e+308 1.79769e+308
+ENDPARAMDEF
+BEG2DMBC
+MAT  1 0.03 20
+MAT  2 0.045 20
+GG "Hydrodynamic"
+GP "Time interval" 20
+GP "Velocity max (ft/sec)" 75
+GP "H min" 0.25
+GP "A min" 1
+GP "Check for dry elements" 1
+GP "Element style" "quadratic"
+GP "Critical scour velocity" "2.0 ft/sec"
+GG "Sediment transport"
+GP "Time interval" 10
+GP "Source X postion" 0
+GP "Source Y position" 0
+GP "Source elevation" 0
+GP "Parcel mass (slug)" 0.5
+GP "Particle mass (slug)" 0.003
+GP "Particle size (in)" 0.05
+GP "Deviation" 0
+GP "Average density (slug/ft^3)" 3
+BCN  772 3
+BCN  774 3
+BCN  776 3
+.
+.
+.
+BCS  4 5
+BCS  1 1 80 0 1
+BCE  1293 1 1 0 0
+TIME 20
+BCS  2 2 380
+TIME 40
+BCS  2 2 400
+TIME 60
+BCS  2 2 380
+TIME 80
+BCS  2 2 300
+TIME 100
+BCS  2 2 300
+TIME 120
+BCS  2 2 300
+TIME 140
+BCS  2 2 300
+TIME 160
+BCS  2 2 300
+TIME 180
+BCS  2 2 300
+TIME 200
+BCS  2 2 300
+TIME 220
+BCS  2 2 300
+TIME 240
+BCS  2 2 300
+TIME 260
+BCS  2 2 300
+TIME 280
+BCS  2 2 300
+TIME 300
+BCS  2 2 300
+TIME 320
+BCS  2 2 300
+TIME 340
+BCS  2 2 300
+TIME 360
+BCS  2 2 300
+TIME 380
+BCS  2 2 300
+TIME 400
+BCS  2 2 300
+TIME 420
+BCS  2 2 300
+TIME 440
+BCS  2 2 300
+TIME 460
+BCS  2 2 300
+TIME 480
+BCS  2 2 300
+TIME 500
+BCS  2 2 300
+TIME 520
+BCS  2 2 300
+TIME 540
+BCS  2 2 300
+TIME 560
+BCS  2 2 300
+TIME 580
+BCS  2 2 300
+TIME 600
+BCS  2 2 300
+TIME 620
+BCS  2 2 300
+TIME 640
+BCS  2 2 300
+TIME 660
+BCS  2 2 300
+TIME 680
+BCS  2 2 300
+TIME 700
+BCS  2 2 300
+TIME 720
+BCS  2 2 300
+TIME 740
+BCS  2 2 300
+TIME 760
+BCS  2 2 300
+TIME 780
+BCS  2 2 300
+TIME 800
+BCS  2 2 300
+TIME 820
+BCS  2 2 300
+TIME 840
+BCS  2 2 300
+TIME 860
+BCS  2 2 300
+TIME 880
+BCS  2 2 300
+TIME 900
+BCS  2 2 300
+TIME 920
+BCS  2 2 300
+TIME 940
+BCS  2 2 300
+TIME 960
+BCS  2 2 300
+TIME 980
+BCS  2 2 300
+TIME 1000
+BCS  2 2 300
+END2DMBC
