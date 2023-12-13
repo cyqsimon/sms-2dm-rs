@@ -11,6 +11,8 @@ pub enum Error {
     ExtraneousCard(String),
     #[error("An empty line is encountered")]
     EmptyLine,
+    #[error("Expected a `{expect}` card but found a `{actual}` card")]
+    WrongCardTag { expect: String, actual: String },
     #[error("{0}")]
     InvalidInt(#[from] ParseIntError),
     #[error("{0}")]

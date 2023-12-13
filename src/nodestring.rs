@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{DefaultUnsigned, Error};
 
+pub(crate) const NODESTRING_TAG: &str = "NS";
 /// Identifies a nodestring.
 #[derive(Clone, Debug, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -35,9 +36,14 @@ where
         let line = line.as_ref();
         let mut field_it = line.split_whitespace();
 
-        let Some("NS") = field_it.next() else {
-            panic!(r#"Nodestring tag should be "NS"."#);
-        };
+        match field_it.next() {
+            Some(NODESTRING_TAG) => {} // tag matches, continue
+            Some(t) => Err(Error::WrongCardTag {
+                expect: NODESTRING_TAG.into(),
+                actual: t.into(),
+            })?,
+            None => Err(Error::EmptyLine)?,
+        }
 
         while let Some(node_raw) = field_it.next() {
             if node_raw.starts_with('-') {

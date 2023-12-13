@@ -6,6 +6,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{DefaultFloat, DefaultUnsigned, Error};
 
+pub(crate) const NODE_TAG: &str = "ND";
+
 /// Defines the ID and location for each node of the mesh.
 ///
 /// Corresponds to the card `ND`.
@@ -33,9 +35,14 @@ where
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut field_it = s.split_whitespace();
 
-        let Some("ND") = field_it.next() else {
-            panic!(r#"Node tag should be "ND"."#);
-        };
+        match field_it.next() {
+            Some(NODE_TAG) => {} // tag matches, continue
+            Some(t) => Err(Error::WrongCardTag {
+                expect: NODE_TAG.into(),
+                actual: t.into(),
+            })?,
+            None => Err(Error::EmptyLine)?,
+        }
 
         let id_raw = field_it.next().ok_or(Error::MissingValue)?;
         let id = U::from_str_radix(id_raw, 10)?;

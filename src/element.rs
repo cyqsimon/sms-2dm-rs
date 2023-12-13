@@ -1,6 +1,7 @@
 use std::{fmt, str::FromStr};
 
 use num_traits::Unsigned;
+use paste::paste;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -9,6 +10,10 @@ use crate::{DefaultUnsigned, Error};
 /// Convenience macro for defining an element.
 macro_rules! mk_el {
     ($(#[$attr:meta])* $name: ident, $n: literal) => {
+        paste! {
+            pub(crate) const [<$name _TAG>]: &str = stringify!($name);
+        }
+
         $(#[$attr])*
         #[derive(Copy, Clone, Debug, PartialEq)]
         #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -33,9 +38,14 @@ macro_rules! mk_el {
             fn from_str(s: &str) -> Result<Self, Self::Err> {
                 let mut field_it = s.split_whitespace();
 
-                let Some(stringify!($name)) = field_it.next() else {
-                    panic!(r#"{el} tag should be "{el}"."#, el = stringify!($name));
-                };
+                paste! {
+                    const TAG: &str = [<$name _TAG>];
+                }
+                match field_it.next() {
+                    Some(TAG) => {} // tag matches, continue
+                    Some(t) => Err(Error::WrongCardTag { expect: TAG.into(), actual: t.into() })?,
+                    None => Err(Error::EmptyLine)?,
+                }
 
                 let id_raw = field_it.next().ok_or(Error::MissingValue)?;
                 let id = U::from_str_radix(id_raw, 10)?;

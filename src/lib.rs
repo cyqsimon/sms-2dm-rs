@@ -10,9 +10,12 @@ use num_traits::{Float, Unsigned};
 use serde::{Deserialize, Serialize};
 
 pub use crate::{element::*, error::Error, node::Node, nodestring::Nodestring};
+use crate::{node::NODE_TAG, nodestring::NODESTRING_TAG};
 
 type DefaultUnsigned = u32;
 type DefaultFloat = f64;
+
+pub(crate) const MESH_2D_TAG: &str = "MESH2D";
 
 /// Representation of a `.2dm` file, as defined in https://www.xmswiki.com/wiki/SMS:2D_Mesh_Files_*.2dm.
 ///
@@ -68,8 +71,8 @@ where
         let mut line_it = s.lines();
 
         // first line must be `MESH2D`
-        let Some("MESH2D") = line_it.next() else {
-            Err(Error::MissingCard("MESH2D".into()))?
+        let Some(MESH_2D_TAG) = line_it.next() else {
+            Err(Error::MissingCard(MESH_2D_TAG.into()))?
         };
 
         while let Some(line) = line_it.next() {
@@ -85,22 +88,22 @@ where
                 }};
             }
             match card_type {
-                "NUM_MATERIALS_PER_ELEM" => {
+                MATERIAL_COUNT_PER_ELEMENT_TAG => {
                     let val = line.parse()?;
                     if let Some(_) = mesh.material_count_per_element {
-                        Err(Error::ExtraneousCard("NUM_MATERIALS_PER_ELEM".into()))?;
+                        Err(Error::ExtraneousCard(MATERIAL_COUNT_PER_ELEMENT_TAG.into()))?;
                     }
                     let _ = mesh.material_count_per_element.insert(val);
                 }
-                "ND" => parse_push!(nodes),
-                "E2L" => parse_push!(e2ls),
-                "E3L" => parse_push!(e3ls),
-                "E3T" => parse_push!(e3ts),
-                "E6T" => parse_push!(e6ts),
-                "E4Q" => parse_push!(e4qs),
-                "E8Q" => parse_push!(e8qs),
-                "E9Q" => parse_push!(e9qs),
-                "NS" => {
+                NODE_TAG => parse_push!(nodes),
+                E2L_TAG => parse_push!(e2ls),
+                E3L_TAG => parse_push!(e3ls),
+                E3T_TAG => parse_push!(e3ts),
+                E6T_TAG => parse_push!(e6ts),
+                E4Q_TAG => parse_push!(e4qs),
+                E8Q_TAG => parse_push!(e8qs),
+                E9Q_TAG => parse_push!(e9qs),
+                NODESTRING_TAG => {
                     let mut ns = Nodestring::new();
                     // ingest the first line
                     let multi_line = ns.ingest(line)?;
@@ -109,7 +112,7 @@ where
                         loop {
                             let Some(line) = line_it.next() else {
                                 // no more lines without seeing a tail node
-                                Err(Error::MissingCard("NS".into()))?
+                                Err(Error::MissingCard(NODESTRING_TAG.into()))?
                             };
                             let keep_going = ns.ingest(line)?;
                             if !keep_going {
@@ -148,6 +151,8 @@ where
     }
 }
 
+pub(crate) const MATERIAL_COUNT_PER_ELEMENT_TAG: &str = "NUM_MATERIALS_PER_ELEM";
+
 /// Defines number of materials per element.
 ///
 /// Corresponds to the card ``NUM_MATERIALS_PER_ELEM`.`
@@ -167,9 +172,14 @@ where
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut field_it = s.split_whitespace();
 
-        let Some("NUM_MATERIALS_PER_ELEM") = field_it.next() else {
-            panic!(r#"Material count per element tag should be "NUM_MATERIALS_PER_ELEM""#);
-        };
+        match field_it.next() {
+            Some(MATERIAL_COUNT_PER_ELEMENT_TAG) => {} // tag matches, continue
+            Some(t) => Err(Error::WrongCardTag {
+                expect: MATERIAL_COUNT_PER_ELEMENT_TAG.into(),
+                actual: t.into(),
+            })?,
+            None => Err(Error::EmptyLine)?,
+        }
 
         let count_raw = field_it.next().ok_or(Error::MissingValue)?;
         let count = U::from_str_radix(count_raw, 10)?;
