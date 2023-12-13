@@ -57,7 +57,7 @@ macro_rules! mk_el {
                     Err(Error::ExtraneousValue(v.into()))?;
                 }
 
-                Ok(Self{ id, nodes, material})
+                Ok(Self{ id, nodes, material })
             }
         }
     };
