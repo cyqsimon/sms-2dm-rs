@@ -27,3 +27,18 @@ impl From<ParseFloatError> for Error {
         Self::InvalidFloat(err)
     }
 }
+
+/// Handle a weak error, depending on configured features.
+///
+/// - If `warn` feature is enabled, this function will log the error.
+/// - If `strict` feature is enabled, this function will return the error.
+pub(crate) fn weak_error(err: Error) -> Result<(), Error> {
+    #[cfg(feature = "warn")]
+    log::warn!("{err}");
+
+    if cfg!(feature = "strict") {
+        Err(err)
+    } else {
+        Ok(())
+    }
+}

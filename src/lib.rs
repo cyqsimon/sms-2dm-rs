@@ -10,7 +10,7 @@ use num_traits::{Float, Unsigned};
 use serde::{Deserialize, Serialize};
 
 pub use crate::{element::*, error::Error, node::Node, nodestring::Nodestring};
-use crate::{node::NODE_TAG, nodestring::NODESTRING_TAG};
+use crate::{error::weak_error, node::NODE_TAG, nodestring::NODESTRING_TAG};
 
 type DefaultUnsigned = u32;
 type DefaultFloat = f64;
@@ -71,14 +71,17 @@ where
         let mut line_it = s.lines();
 
         // first line must be `MESH2D`
-        let Some(MESH_2D_TAG) = line_it.next() else {
-            Err(Error::MissingCard(MESH_2D_TAG.into()))?
-        };
+        match line_it.next() {
+            Some(MESH_2D_TAG) => {} // continue
+            Some(_) | None => weak_error(Error::MissingCard(MESH_2D_TAG.into()))?,
+        }
 
         while let Some(line) = line_it.next() {
             let Some(card_type) = line.split_whitespace().next() else {
                 // empty line
-                Err(Error::EmptyLine)?
+                weak_error(Error::EmptyLine)?;
+                // skip this line if we don't hard error
+                continue;
             };
 
             macro_rules! parse_push {
@@ -89,10 +92,11 @@ where
             }
             match card_type {
                 MATERIAL_COUNT_PER_ELEMENT_TAG => {
-                    let val = line.parse()?;
+                    // check duplicate
                     if let Some(_) = mesh.material_count_per_element {
-                        Err(Error::ExtraneousCard(MATERIAL_COUNT_PER_ELEMENT_TAG.into()))?;
+                        weak_error(Error::ExtraneousCard(MATERIAL_COUNT_PER_ELEMENT_TAG.into()))?;
                     }
+                    let val = line.parse()?;
                     let _ = mesh.material_count_per_element.insert(val);
                 }
                 NODE_TAG => parse_push!(nodes),
@@ -112,6 +116,7 @@ where
                         loop {
                             let Some(line) = line_it.next() else {
                                 // no more lines without seeing a tail node
+                                // always a hard error because it's too much of a mess otherwise
                                 Err(Error::MissingCard(NODESTRING_TAG.into()))?
                             };
                             let keep_going = ns.ingest(line)?;
@@ -185,7 +190,7 @@ where
         let count = U::from_str_radix(count_raw, 10)?;
 
         if let Some(v) = field_it.next() {
-            Err(Error::ExtraneousValue(v.into()))?;
+            weak_error(Error::ExtraneousValue(v.into()))?;
         }
 
         Ok(Self(count))

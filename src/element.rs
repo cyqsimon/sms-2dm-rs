@@ -5,7 +5,7 @@ use paste::paste;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use crate::{DefaultUnsigned, Error};
+use crate::{error::weak_error, DefaultUnsigned, Error};
 
 /// Convenience macro for defining an element.
 macro_rules! mk_el {
@@ -64,7 +64,7 @@ macro_rules! mk_el {
                 let material = U::from_str_radix(mat_raw, 10)?;
 
                 if let Some(v) = field_it.next() {
-                    Err(Error::ExtraneousValue(v.into()))?;
+                    weak_error(Error::ExtraneousValue(v.into()))?;
                 }
 
                 Ok(Self{ id, nodes, material })

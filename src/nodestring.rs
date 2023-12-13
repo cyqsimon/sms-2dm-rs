@@ -4,7 +4,7 @@ use num_traits::Unsigned;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use crate::{DefaultUnsigned, Error};
+use crate::{error::weak_error, DefaultUnsigned, Error};
 
 pub(crate) const NODESTRING_TAG: &str = "NS";
 /// Identifies a nodestring.
@@ -51,7 +51,7 @@ where
                 self.nodes.push(node);
 
                 if let Some(val) = field_it.next() {
-                    Err(Error::ExtraneousValue(val.into()))?;
+                    weak_error(Error::ExtraneousValue(val.into()))?;
                 }
                 return Ok(false);
             }

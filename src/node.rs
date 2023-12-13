@@ -4,7 +4,7 @@ use num_traits::{Float, Unsigned};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use crate::{DefaultFloat, DefaultUnsigned, Error};
+use crate::{error::weak_error, DefaultFloat, DefaultUnsigned, Error};
 
 pub(crate) const NODE_TAG: &str = "ND";
 
@@ -58,7 +58,7 @@ where
         }
 
         if let Some(v) = field_it.next() {
-            Err(Error::ExtraneousValue(v.into()))?;
+            weak_error(Error::ExtraneousValue(v.into()))?;
         }
 
         Ok(Self { id, coordinate })
