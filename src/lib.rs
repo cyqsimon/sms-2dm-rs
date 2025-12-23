@@ -93,7 +93,7 @@ where
             match card_type {
                 MATERIAL_COUNT_PER_ELEMENT_TAG => {
                     // check duplicate
-                    if let Some(_) = mesh.material_count_per_element {
+                    if mesh.material_count_per_element.is_some() {
                         weak_error(Error::ExtraneousCard(MATERIAL_COUNT_PER_ELEMENT_TAG.into()))?;
                     }
                     let val = line.parse()?;

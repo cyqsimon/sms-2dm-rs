@@ -51,13 +51,11 @@ macro_rules! mk_el {
                 let id = U::from_str_radix(id_raw, 10)?;
 
                 let mut nodes = [U::zero(); $n];
-                for i in 0..$n {
+                for node in nodes.iter_mut() {
                     let Some(node_raw) = field_it.next() else {
                         Err(Error::MissingValue)?
                     };
-
-                    let node = U::from_str_radix(node_raw, 10)?;
-                    nodes[i] = node;
+                    *node = U::from_str_radix(node_raw, 10)?;
                 }
 
                 let mat_raw = field_it.next().ok_or(Error::MissingValue)?;

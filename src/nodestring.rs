@@ -46,8 +46,8 @@ where
         }
 
         while let Some(node_raw) = field_it.next() {
-            if node_raw.starts_with('-') {
-                let node = U::from_str_radix(&node_raw[1..], 10)?;
+            if let Some(node_n) = node_raw.strip_prefix('-') {
+                let node = U::from_str_radix(node_n, 10)?;
                 self.nodes.push(node);
 
                 if let Some(val) = field_it.next() {

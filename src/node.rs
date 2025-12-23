@@ -48,13 +48,11 @@ where
         let id = U::from_str_radix(id_raw, 10)?;
 
         let mut coordinate = [F::zero(); 3];
-        for i in 0..3 {
+        for component in coordinate.iter_mut() {
             let Some(c_raw) = field_it.next() else {
                 Err(Error::MissingValue)?
             };
-
-            let c = F::from_str_radix(c_raw, 10)?;
-            coordinate[i] = c;
+            *component = F::from_str_radix(c_raw, 10)?;
         }
 
         if let Some(v) = field_it.next() {
