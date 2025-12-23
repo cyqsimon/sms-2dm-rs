@@ -1,4 +1,4 @@
-# sms-2dm-**rs**
+# sms-2dm-rs
 
 A low-level parser for the `.2dm` format used by Aquaveo™️ Surface-water Modeling System (SMS).
 
