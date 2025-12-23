@@ -3,7 +3,7 @@ mod error;
 mod node;
 mod nodestring;
 
-use std::{fmt, str::FromStr};
+use std::{fmt, iter, str::FromStr};
 
 use num_traits::{Float, Unsigned};
 #[cfg(feature = "serde")]
@@ -107,25 +107,17 @@ where
                 E4Q_TAG => parse_push!(e4qs),
                 E8Q_TAG => parse_push!(e8qs),
                 E9Q_TAG => parse_push!(e9qs),
-                NODESTRING_TAG => {
+                NODESTRING_TAG => 'ns_end: {
                     let mut ns = Nodestring::new();
-                    // ingest the first line
-                    let multi_line = ns.ingest(line)?;
-                    // ingest potential subsequent lines
-                    if multi_line {
-                        loop {
-                            let Some(line) = line_it.next() else {
-                                // no more lines without seeing a tail node
-                                // always a hard error because it's too much of a mess otherwise
-                                Err(Error::MissingCard(NODESTRING_TAG.into()))?
-                            };
-                            let keep_going = ns.ingest(line)?;
-                            if !keep_going {
-                                break;
-                            }
+                    for line in iter::once(line).chain(&mut line_it) {
+                        if ns.ingest(line)?.is_break() {
+                            mesh.nodestring.push(ns);
+                            break 'ns_end;
                         }
                     }
-                    mesh.nodestring.push(ns);
+                    // no more lines without seeing a tail node
+                    // always a hard error because it's too much of a mess otherwise
+                    Err(Error::MissingCard(NODESTRING_TAG.into()))?;
                 }
                 _ => {} // TODO: other cards ignored for now; PRs welcomed
             }

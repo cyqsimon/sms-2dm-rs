@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{fmt, ops::ControlFlow};
 
 use num_traits::Unsigned;
 #[cfg(feature = "serde")]
@@ -28,11 +28,11 @@ where
 
     /// Ingest a nodestring card.
     ///
-    /// The returned boolean indicates whether parsing should continue into the
-    /// next line (i.e. `true` until a tail node is encountered).
+    /// The returned [`ControlFlow`] indicates whether parsing should continue
+    /// into the next line (i.e. `Break` when a tail node is encountered).
     ///
     /// The tail node is denoted by a negative sign prefix.
-    pub(crate) fn ingest(&mut self, line: impl AsRef<str>) -> Result<bool, Error> {
+    pub(crate) fn ingest(&mut self, line: impl AsRef<str>) -> Result<ControlFlow<()>, Error> {
         let line = line.as_ref();
         let mut field_it = line.split_whitespace();
 
@@ -53,13 +53,13 @@ where
                 if let Some(val) = field_it.next() {
                     weak_error(Error::ExtraneousValue(val.into()))?;
                 }
-                return Ok(false);
+                return Ok(ControlFlow::Break(()));
             }
 
             let node = U::from_str_radix(node_raw, 10)?;
             self.nodes.push(node);
         }
 
-        Ok(true)
+        Ok(ControlFlow::Continue(()))
     }
 }
